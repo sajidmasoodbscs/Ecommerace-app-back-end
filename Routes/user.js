@@ -77,7 +77,8 @@ router.get("/find/:id",verifyTokenAndAdmin,async(req,res)=>{
      }
  
     } catch (error) {
-     res.status(500).json({"Error":error});
+    console.log("Error is fetching product : ",error )
+     res.status(500).json({"Error":error.toString()});
     }
      
  });
@@ -86,7 +87,7 @@ router.get("/find/:id",verifyTokenAndAdmin,async(req,res)=>{
 router.get("/",verifyTokenAndAdmin,async(req,res)=>{
    try {
     const query=req.query.limit
-    const users= query ? await User.find({}).sort({"createdAt":1}).limit(1): User.find({});
+    const users= query ? await User.find({}).sort({"createdAt":1}).limit(1): await User.find({});
 
     if (users) {
         res.status(200).json(users);
@@ -95,7 +96,8 @@ router.get("/",verifyTokenAndAdmin,async(req,res)=>{
     }
 
    } catch (error) {
-    res.status(500).json({"Error":error});
+    console.log("Error in users fetching : ",error)
+    res.status(500).json({"Error":error.toString()});
    }
     
 });

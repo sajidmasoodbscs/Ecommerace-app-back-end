@@ -12,8 +12,13 @@ const verifyToken= async (req,res,next)=>{
 
         jwt.verify(token,process.env.JWT_SEC,(err,user)=>{
             if (err) {
-                res.status(401).json("Unauthorized access because token is invalid");
-                console.log("Token is not valid",err)
+                let errorReport={
+                    "Error Name":err.name,
+                    "Error Message":err.message
+                }
+                console.log("JWT Error Report -> : ",errorReport);
+                
+                res.status(401).json(errorReport);
             }else{
                 console.log("Token validated and user is : ",user);
                 req.user=user;

@@ -6,7 +6,7 @@ const CartSchema=new mongoose.Schema(
         userId:{
             type: String,
             unique:true,           
-            required: [true, "Why no title?"],
+            required:true,
         },
         products:[
             {
