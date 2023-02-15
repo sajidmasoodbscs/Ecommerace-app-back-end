@@ -8,6 +8,8 @@ const Product=require("./Routes/product");
 const Order=require("./Routes/Order");
 const Cart=require("./Routes/cart");
 const Payment=require("./Routes/payment");
+const Paymentsession=require("./Routes/Paymentsession");
+
 var cors = require('cors')
 
 
@@ -37,6 +39,9 @@ app.use("/api/orders",Order);
 app.use("/api/cart",Cart);
 
 app.use("/api/stripe",Payment);
+
+app.use("/api/payment",Paymentsession);
+
 
 
 
