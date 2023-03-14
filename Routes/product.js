@@ -6,8 +6,39 @@ const {
 const router = require("express").Router();
 const Product = require("../Models/Product");
 const User = require("../Models/User");
+const {db}=require("../Config/dbConfig")
 
 const { findByIdAndDelete, findById } = require("../Models/User");
+
+
+router.put("/changetype",verifyTokenAndAdmin,async(req,res)=>{
+
+  try {
+
+  // const result= await Product.updateMany({}, { color: new Array(color) });
+  //   const resultone=await Product.save(result)
+let dataArray={}
+ await Products.find( {} ).forEach(async function (x) {   
+    x.color = new Array(x.color); // convert field to string
+         const data= await db.products.save(x);
+         dataArray=data;
+  });
+
+    console.log("Typed changed and product is :",dataArray)
+
+     res
+      .status(200)
+      .json({Message: `Type changed successfully`});
+
+  } catch (error) {
+    console.log("Error and error is ",error)
+
+    res
+    .status(500)
+    .json({Error: error});
+  }
+
+});
 
 // CREATE PRODUCT
 router.post("/add", verifyTokenAndAdmin, async (req, res) => {
@@ -121,21 +152,27 @@ router.get("/",verifyTokenAndAuthentication ,async (req, res) => {
     if (query) {
       const Products = await Product.find({}).sort({ createdAt: 1 }).limit(1);
       if (Products) {
+        // console.log("if new in api Call and products are ",Products)
         res.status(200).json(Products);
       } else {
         res.status(200).json("No product found");
       }
     } else if (qCategory) {
+      console.log("categoray from from front end",qCategory)
       const Products = await Product.find({ catogries: { $in: [qCategory] } });
 
       if (Products) {
+        // console.log("if category in Api Call and products are ",Products)
+
         res.status(200).json(Products);
       } else {
         res.status(200).json("No product found");
       }
     } else {
-      const Products = await Product.find();
+      const Products = await Product.find({});
       if (Products) {
+        // console.log("all producs Api Call and products are ",Products)
+
         res.status(200).json(Products);
       } else {
         res.status(200).json("No product found");

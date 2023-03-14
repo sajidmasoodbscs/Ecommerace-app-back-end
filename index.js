@@ -9,17 +9,13 @@ const Order=require("./Routes/Order");
 const Cart=require("./Routes/cart");
 const Payment=require("./Routes/payment");
 const Paymentsession=require("./Routes/Paymentsession");
-
-var cors = require('cors')
-
-
-
+var cors = require('cors');
+const cookies = require("cookie-parser");
 var bodyParser = require('body-parser')
 
-
-
-app.use(cors())
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }))
 app.use(express.json());
+app.use(cookies());
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))

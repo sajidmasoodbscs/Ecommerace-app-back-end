@@ -3,14 +3,16 @@ const User = require("../Models/User");
 
 
 const verifyToken= async (req,res,next)=>{
-    const authToken=req.headers.token;
 
-    console.log("Token from header is : ",authToken)
+    console.log("Cookies are :",req.cookies);
+    const token = req.cookies.access_token;
+    if (!token) {
+        console.log("Token not exsist")
+        return res.sendStatus(403);
+      }
 
-    if (authToken) {
-        const token=authToken.split(" ")[1];
-
-        jwt.verify(token,process.env.JWT_SEC,(err,user)=>{
+      try {
+        jwt.verify(token, process.env.JWT_SEC,(err,user)=>{
             if (err) {
                 let errorReport={
                     "Error Name":err.name,
@@ -22,13 +24,13 @@ const verifyToken= async (req,res,next)=>{
             }else{
                 console.log("Token validated and user is : ",user);
                 req.user=user;
-                next();
+                return next();
             }
-        })
-
-    }else{
-        return res.status(500).json("Access token not found")
-    }
+        });
+    } catch(error) {
+        console.log("Error in JWT token verification",error)
+        return res.sendStatus(403);
+      }
 
 }
 

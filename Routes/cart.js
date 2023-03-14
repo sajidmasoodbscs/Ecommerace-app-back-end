@@ -7,9 +7,11 @@ const {
   const router = require("express").Router();
   const Cart = require("../Models/Cart");
   const User = require("../Models/User");
+  const reqMethod=require("./requestMethod")
+
     
   // CREATE CART
-  router.post("/addcart", verifyToken, async (req, res) => {
+  router.post("/addcart",reqMethod,verifyToken, async (req, res) => {
     console.log("We are inside add new cart function.");
     const cartData = new Cart(req.body);
   
@@ -31,7 +33,7 @@ const {
     }
   });
   
-  router.put("/updatecart/:id", verifyTokenAndAuthentication, async (req, res) => {
+  router.put("/updatecart/:id",reqMethod,verifyTokenAndAuthentication, async (req, res) => {
     console.log("We are inside update cart function.");
   
     try {  
@@ -59,7 +61,7 @@ const {
     }
   });
   
-  router.delete("/deletecart/:id", verifyTokenAndAuthentication, async (req, res) => {
+  router.delete("/deletecart/:id",reqMethod, verifyTokenAndAuthentication, async (req, res) => {
     try {
       console.log("Here we are inside delete  cart function");
       const deleteRequired = await Cart.findById(req.params.id);
@@ -86,7 +88,7 @@ const {
     }
   });
   
-  router.get("/findcart/:userid",verifyTokenAndAuthentication, async (req, res) => {
+  router.get("/findcart/:userid", reqMethod, verifyTokenAndAuthentication, async (req, res) => {
     try {
       //  console.log(`Welcome Mr ${req.user.name}. Please wait we are fetching data for you.....`)
   
@@ -103,7 +105,7 @@ const {
     }
   });
   
-  router.get("/allcart",verifyTokenAndAdmin, async (req, res) => {
+  router.get("/allcart", reqMethod, verifyTokenAndAdmin, async (req, res) => {
     try {
       
         const Carts=await Cart.find({});

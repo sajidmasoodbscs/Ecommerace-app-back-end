@@ -13,7 +13,4 @@ mongoose.connect(process.env.DBURL,options).then((result)=>{
 }).catch((error)=>{
     console.log("Database connection failed and erros is :"+error)
 });
-
-
-
-
+ 

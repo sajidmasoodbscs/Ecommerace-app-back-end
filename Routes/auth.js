@@ -2,9 +2,10 @@ const router=require("express").Router()
 const User=require("../Models/User")
 const cryptoJS=require("crypto-js")
 const jwt=require("jsonwebtoken");
+const reqMethod=require("./requestMethod")
 
 
-router.post("/register",async(req,res)=>{
+router.post("/register",reqMethod,async(req,res)=>{
 
 signupcheck(req.body.username,req.body.password,req.body.email).then(async(result)=>{
 
@@ -119,38 +120,66 @@ function logincheck(name,password) {
 });
 
 
-router.post("/login",async(req,res)=>{
+router.post("/login",reqMethod,async(req,res)=>{
+
+    console.log("Body is : ", req.body);
+
 
 try {
-    const user= await User.findOne({username:req.body.username});
+    
+    const { email } = req.body;
+    const { password } = req.body;
+    
+    console.log("Emails is : ", email);
+    console.log("Password is : ", password);
+    if (!email || !password) {
+       
+          return res.status(400).json('Request missing email or password');
+        }
 
-    !user.username && res.status(400).json("User not found");
+    let user= await User.findOne({email:req.body.email});
 
-    console.log("Password is : ", req.body.password);
+    if (!user) {
+        return res
+          .status(400)
+          .json('No user found by this email. Please Sign UP.');
+      }
+
 
     const hashpassword=cryptoJS.AES.decrypt(user.password,process.env.PASS_SEC);
     const decode=hashpassword.toString(cryptoJS.enc.Utf8);
 
     console.log("Password aftre decode is : ", decode);
 
+   if(decode !== req.body.password){
+    return res.status(400).json("Wrong Password.");
 
-    decode !== req.body.password && res.status(400).json("wrong password");
+   }else{
+    user.password = undefined;
+    user = JSON.parse(JSON.stringify(user));   
+ 
+   const token=  jwt.sign(
+         {
+             id:user._id,
+             isAdmin:user.isAdmin
+         },
+         process.env.JWT_SEC,
+         {
+             expiresIn:"2h"
+         }
+     );
+ 
+     console.log("User login : ", user.username);
+ 
+     return res
+     .cookie("access_token", token, {
+       httpOnly: true,
+       secure: process.env.NODE_ENV !== "development",
+     })
+     .status(200)
+     .json({ message: "Logged in successfully 😊 👌" });
+   }
 
-
-    const {password,...other}=user._doc;
-
-    const accessToken=jwt.sign(
-        {
-            id:user._id,
-            isAdmin:user.isAdmin
-        },
-        process.env.JWT_SEC,
-        {
-            expiresIn:"2h"
-        }
-    )
-    console.log("User login : ", user.username);
-    res.status(200).json({...other,accessToken});
 
 } catch (error) {
     res.status(500).json(error);

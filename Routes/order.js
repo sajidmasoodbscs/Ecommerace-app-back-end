@@ -1,15 +1,14 @@
-const {
-    verifyTokenAndAuthentication,
-    verifyTokenAndAdmin,
-    verifyToken,
-  } = require("./varifytoken");
-  
-  const router = require("express").Router();
-
+const router = require("express").Router();
 const orders=require("../Models/Order")
+const Order = require("../Models/Order");
+const User = require("../Models/User");
+const reqMethod=require("./requestMethod")
 
-  const Order = require("../Models/Order");
-  const User = require("../Models/User");
+const {
+  verifyTokenAndAuthentication,
+  verifyTokenAndAdmin,
+  verifyToken,
+} = require("./varifytoken"); 
 
 
 
@@ -17,7 +16,7 @@ const orders=require("../Models/Order")
   
     
   // CREATE CART
-  router.post("/addorder", verifyToken, async (req, res) => {
+  router.post("/addorder",reqMethod, verifyToken, async (req, res) => {
     console.log("We are inside add new order function.");
     const orderData = new Order(req.body);
   
@@ -39,7 +38,7 @@ const orders=require("../Models/Order")
     }
   });
   
-  router.put("/updateorder/:id", verifyTokenAndAdmin, async (req, res) => {
+  router.put("/updateorder/:id", reqMethod, verifyTokenAndAdmin, async (req, res) => {
     console.log("We are inside update cart function.");
   
     try {  
@@ -67,7 +66,7 @@ const orders=require("../Models/Order")
     }
   });
   
-  router.delete("/deleteorder/:id", verifyTokenAndAdmin, async (req, res) => {
+  router.delete("/deleteorder/:id", reqMethod, verifyTokenAndAdmin, async (req, res) => {
     try {
       console.log("Here we are inside delete  cart function");
       const deleteRequired = await Order.findById(req.params.id);
@@ -94,7 +93,7 @@ const orders=require("../Models/Order")
     }
   });
   
-  router.get("/find/:userid",verifyTokenAndAuthentication, async (req, res) => {
+  router.get("/find/:userid", reqMethod, verifyTokenAndAuthentication, async (req, res) => {
     try {
       //  console.log(`Welcome Mr ${req.user.name}. Please wait we are fetching data for you.....`)
   
@@ -111,7 +110,7 @@ const orders=require("../Models/Order")
     }
   });
   
-  router.get("/allorders",verifyTokenAndAdmin, async (req, res) => {
+  router.get("/allorders", reqMethod, verifyTokenAndAdmin, async (req, res) => {
     try {
       
         const Orders=await Order.find({});
@@ -127,7 +126,7 @@ const orders=require("../Models/Order")
   });
 
 
-  router.get("/salesreport",verifyTokenAndAdmin, async (req, res) => {
+  router.get("/salesreport", reqMethod, verifyTokenAndAdmin, async (req, res) => {
     try {
       
         let date=new Date();
